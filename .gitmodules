@@ -1,0 +1,3 @@
+[submodule "cs156b-data"]
+	path = cs156b-data
+	url = git@github.com:cs156/cs156b-data.git

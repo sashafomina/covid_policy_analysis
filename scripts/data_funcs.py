@@ -3,13 +3,20 @@ import numpy as np
 import re
 import math
 
-policies = ['c1_school_closing', 'c2_workplace_closing', 'c3_cancel_public_events',
-           'c4_restrictions_on_gatherings', 'c5_close_public_transport', 'c6_stay_at_home_requirements',
-           'c7_restrictions_on_internal_movement', 'c8_international_travel_controls', 'e1_income_support',
-           'e2_debt/contract_relief', 'e3_fiscal_measures', 'h1_public_information_campaigns',
-           'h2_testing_policy', 'h3_contact_tracing', 'h4_emergency_investment_in_healthcare', 'h5_investment_in_vaccines',
-           'h6_facial_coverings', 'h7_vaccination_policy','h8_protection_of_elderly_people']
+# List of policy columns from the Oxford Policy Tracker Data
+policies = ['c1_school_closing', 'c2_workplace_closing',
+            'c3_cancel_public_events', 'c4_restrictions_on_gatherings',
+            'c5_close_public_transport', 'c6_stay_at_home_requirements',
+           'c7_restrictions_on_internal_movement',
+           'c8_international_travel_controls', 'e1_income_support',
+           'e2_debt/contract_relief', 'e3_fiscal_measures',
+           'h1_public_information_campaigns',
+           'h2_testing_policy', 'h3_contact_tracing',
+           'h4_emergency_investment_in_healthcare', 'h5_investment_in_vaccines',
+           'h6_facial_coverings', 'h7_vaccination_policy',
+           'h8_protection_of_elderly_people']
 
+# State name to state abbreviation dictionary
 state_to_abbrev = {
     'Alabama': 'AL',
     'Alaska': 'AK',
@@ -69,6 +76,7 @@ state_to_abbrev = {
     'Wyoming': 'WY'
 }
 
+# State abbreviation to state name dictionary
 abbrev_to_state = {v: k for k, v in state_to_abbrev.items()}
 
 def clean_df_cols(df):
@@ -153,6 +161,7 @@ def get_state_policy_data(fill):
         running_df = None
         for name_df, df in policy_df.groupby(['country_code', 'region_code']):
             df.loc[:, policy_col_names] = df[policy_col_names].ffill()
+            df.fillna(0, inplace=True)
             if running_df is None:
                 running_df = df.copy()
             else:

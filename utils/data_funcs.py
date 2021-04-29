@@ -382,9 +382,9 @@ def get_overall_data_df(policy="stay_at_home"):
         # Adding day, year, month and dropping date
         df['month'] = df.date.dt.month
         df['year'] = df.date.dt.year-2020
-        # Days since start of case reporting i.e. March 13, 2020
+        # Days since Jnuary 1, 2020
         start = pd.Period("2020-03-13", freq='H').dayofyear
-        df['days_since_start'] = 365*(df.year) + df.date.dt.dayofyear - start
+        df['days_since_start'] = 365*(df.year) + df.date.dt.dayofyear
 
 
         return df

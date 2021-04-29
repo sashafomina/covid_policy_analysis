@@ -3,8 +3,17 @@ import numpy as np
 import re
 import math
 
+'''
+===========================================
+ All functions are helpers for getting the merged 
+data frame that will be used to train and test. Note 
+that for now, this overall data frame only gives 
+information based on the lock_down policy. 
+===========================================
+'''
+
 # List of policy columns from the Oxford Policy Tracker Data
-policies = ['c1_school_closing', 'c2_workplace_closing',
+POLICIES = ['c1_school_closing', 'c2_workplace_closing',
             'c3_cancel_public_events', 'c4_restrictions_on_gatherings',
             'c5_close_public_transport', 'c6_stay_at_home_requirements',
            'c7_restrictions_on_internal_movement',
@@ -17,7 +26,7 @@ policies = ['c1_school_closing', 'c2_workplace_closing',
            'h8_protection_of_elderly_people']
 
 # State name to state abbreviation dictionary
-state_to_abbrev = {
+STATE_TO_ABBREV ={
     'Alabama': 'AL',
     'Alaska': 'AK',
     'American Samoa': 'AS',
@@ -77,11 +86,11 @@ state_to_abbrev = {
 }
 
 # State abbreviation to state name dictionary
-abbrev_to_state = {v: k for k, v in state_to_abbrev.items()}
+abbrev_to_state = {v: k for k, v in STATE_TO_ABBREV.items()}
 
-def clean_df_cols(df):
+def snake_case_df_cols(df):
     """
-    Alters df in place so that column names are lowercase and in snake case
+    Alters df in place so that column names in snake case
     """
 
     # Change camel case columns to snake case, also apply lowercase
@@ -121,7 +130,11 @@ def get_state_covid_daily_data():
     us_cnt_daily_df = get_county_covid_daily_data()
     us_state_daily_df = us_cnt_daily_df.groupby(['state','date']).sum()
     us_state_daily_df = us_state_daily_df.reset_index()
-    return us_state_daily_df
+    not_states = ['District of Columbia', 'Guam', 'Northern Mariana Islands',
+                  'Puerto Rico', 'Virgin Islands']
+    us_state_daily_50 =  us_state_daily_df[~(us_state_daily_df.state.isin(not_states))]
+
+    return us_state_daily_50
 
 def get_state_pop_by_demographic_data():
     state_pop_df = pd.read_csv('our_data/demographic_data/us/population_and_demographic_estimates.csv')
@@ -141,10 +154,10 @@ def get_state_pop_total_data():
 
     return state_total_pop_df
 
-def get_state_policy_data(fill):
+def get_state_policy_data(fill=True):
     policy_df = pd.read_csv("our_data/policy_data/international/OxCGRT_latest.csv")
     policy_df['Date'] = pd.to_datetime(policy_df['Date'], format='%Y%m%d')
-    clean_df_cols(policy_df)
+    snake_case_df_cols(policy_df)
     policy_df = policy_df.loc[policy_df['country_code'] == 'USA'].copy()
 
     if fill:
@@ -192,7 +205,7 @@ def get_pop_density_by_state_data():
     return state_geopop_df[['state', 'pop_density']]
 
 def get_at_away_6_data():
-    at_away_df = pd.read_csv('our_data/misc_metric_data/us/at_away_6_data.csv')
+    at_away_df = pd.read_csv('our_data/covid_metric_data/us/at_away_6_data.csv')
     at_away_df = at_away_df.replace(abbrev_to_state)
     at_away_df.date = pd.to_datetime(at_away_df['date'])
     at_away_df['mobile_ppl_per100'] = at_away_df.value * 100
@@ -315,3 +328,63 @@ def get_future_cum_cases(case_df, window=15):
             running_series = pd.concat([running_series, series], axis = 0)
 
     return running_series.reset_index(drop=True)
+
+def get_rt_by_state():
+    df =  pd.read_csv('our_data/covid_metric_data/us/rates_by_state.csv')
+    rt_df = df[['Location','Rt']].copy()
+    rt_df.rename(columns={'Location': 'state'}, inplace=True)
+    return rt_df
+
+def get_overall_data_df(policy="stay_at_home"):
+    if policy == "stay_at_home":
+        df = get_state_covid_daily_data()
+        policy_df = get_state_policy_data()
+
+        # Keep relevant columns
+        policy_df = policy_df[['region_name', 'date', 'c6_stay_at_home_requirements']]
+
+        # Add days since policy change
+        policy_df.loc[:, 'days_since_more_strict'] =(
+            time_elapsed_since_policy_change(policy_df, 
+                                             'c6_stay_at_home_requirements',
+                                             type_change='more_strict'))
+        policy_df.loc[:, 'days_since_less_strict'] = (
+            time_elapsed_since_policy_change(policy_df, 
+                                             'c6_stay_at_home_requirements',
+                                             type_change='less_strict'))
+
+        # Rename region_name to state
+        policy_df.rename(columns={'region_name': 'state'}, inplace=True)
+
+        
+        # Merge daily cases with policy df
+        df = df.merge(policy_df, how='left', on=['state', 'date'])
+        
+        
+        # Merge pop density with input df
+        df = df.merge(get_pop_density_by_state_data(), on='state', how='left')
+
+        # Merge mobility data with input df
+        df = df.merge(get_at_away_6_data(), on=['date', 'state'], how='left')
+
+        # Merge wage data with input df
+        df = df.merge(get_scaled_wages_data()[['state', 'scaled_median_income']], on=['state'], how='left')
+
+        # Merge political data with input df
+        df = df.merge(get_political_data(), on=['state'], how='left')
+
+        # Binary encode state names
+        alpha_ordered_states = df.state.unique()
+        alpha_ordered_states.sort()
+        binary_state_encoded_df = binary_encode_category(alpha_ordered_states, 'state')
+        df = df.merge(binary_state_encoded_df, on='state', how='left')
+        
+        # Adding day, year, month and dropping date
+        df['month'] = df.date.dt.month
+        df['year'] = df.date.dt.year-2020
+        # Days since start of case reporting i.e. March 13, 2020
+        start = pd.Period("2020-03-13", freq='H').dayofyear
+        df['days_since_start'] = 365*(df.year) + df.date.dt.dayofyear - start
+
+
+        return df

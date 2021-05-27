@@ -24,7 +24,7 @@ import sklearn.metrics
 '''
 =============================================================================================
 = The below functions are utility functions used to either create or extract new dataframes =
-= given the original policy dataframes given certain conditions - such as a time period,    =
+= using the original policy dataframes for different purposesuch as a time period,          =
 = policies we want to look at change dates for, making holiday dataframes using policies,   =
 = adding mobility data to a state-policy dataframe                                          =
 =============================================================================================
@@ -830,7 +830,7 @@ def find_optimal_params(lower_bounds, upper_bounds, input_df, gen_func, theta0=N
     
     Input:
         lower_bounds - a length-n array containing the lower bounds for the estimated parameters of
-            the generative function used to generate the carrying capacity for the the input dataframe, \
+            the generative function used to generate the carrying capacity for the the input dataframe,
             where n is the number of estimated parameters for the generative function provided.
         upper_bounds - same as lower_bounds, but with upper bounds instead.
         input_df - the input DataFrame of the period with. Must at least have a date column ('ds') 

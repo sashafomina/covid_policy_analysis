@@ -231,7 +231,7 @@ def find_upper_window(policy_df, max_date):
     policy_df.iloc[-1, policy_df.columns.get_loc('shifted_ds')] = max_date
     policy_df['upper_window'] = policy_df.apply(lambda x : (x['shifted_ds'] - x['ds']).days - 1, axis=1)
     
-    # To avoid overfitting, cap the upper window at 30 days
+    # To avoid overfitting, cap the upper window at 90 days
     policy_df['upper_window'] = policy_df.apply(lambda x : min(x['upper_window'], 90), axis=1)
     policy_df = policy_df.drop(columns='shifted_ds')
     return policy_df

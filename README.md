@@ -2,11 +2,11 @@
 
 ## disco_panda Team Members
 
-    Thai Khong - Did some initial data analysis regarding effects of policy changes on COVID-19 output metrics. Focused on analyzing policy effectiveness using the Facebook Prophet models (with linear and logistic growth curve)
+Thai Khong - Did some initial data analysis regarding effects of policy changes on COVID-19 output metrics. Focused on analyzing policy effectiveness using the Facebook Prophet models (with linear and logistic growth curve)
 
-    Sasha Fomina -
+Sasha Fomina -
 
-    Beau Lobodin -
+Beau Lobodin -
 
 # Models
 ## Facebook Prophet - Time Series Model
@@ -43,7 +43,7 @@ implementation.
     * Optimizing functions to fit logistic growth curves and obtain optimal parameters
 
 3. `prophet_tk.ipynb` - Actual implementation of Facebook Prophet model, both with linear
-and logistic growth curve, and contains analyses of the resulting models and some experimental models. A summary of the file includes:
+and logistic growth curve, and contains analyses and visualizations of the resulting models and some other experimental models. A summary of the file includes:
     * Detailed explanation of the Facebook Prophet equation
     * Counterfactual linear and logistic model trained exclusively on COVID-19 output metrics
     * Linear growth models where policy changes are modeled in the form of extended holidays to capture effects on COVID-19 output metrics

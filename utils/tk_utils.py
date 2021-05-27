@@ -433,6 +433,11 @@ def plot_model_actual_predicted(input_df, fc_df, actual_df):
     forecasting period, and the actual values for the same period. Takes in 3 dataframes: the training dataframe,
     the predicted dataframe, and the actual dataframe. Note that fc_df and actual_df must occupy the 
     same time period.
+    
+    Inputs:
+        input_df - DataFrame containing training data
+        fc_df - DataFrame containing the forecast output metrics
+        actual_df - DataFrame containing the actual values for the output metric for forecasted period
     '''
     
     # Plots the result of the data points for the training period, the predictions for forecasted period, and the actual values for
@@ -507,6 +512,11 @@ def plot_counterfactual_forecast_actual(actual_df, fc_df, cfc_df):
     Function to plot the COVID-19 output metric for the actual dataset, the forecasted dataset (with policies taken into
     account as either holiday effects or regressors), and the counterfactual model trained on the original dataset without
     any policy effects.
+    
+    Inputs:
+        input_df - DataFrame containing training data
+        fc_df - DataFrame containing the forecast output metrics (with the trained model)
+        cfc_df - DataFrame containing the counterfactual (no additional regressors or holiday effects) forecasted values
     '''
     
     # Create trace plots for the actual dataset
@@ -802,7 +812,7 @@ def gen_logistic_func(t, C_min, C_max, r, t_mid, eps):
         
     where:
         C_min: the lower asymptote
-        C_max: the upper asymptote. This is the carry capacity if C_min = 1.
+        C_max: the upper asymptote. This is the carrying capacity if C_min = 1.
         r: positive cofficient representing the daily exponential growth rate.
         1 / eps: skewness of the distribution of the cases
         t_mid: estimated tipping point

@@ -56,11 +56,11 @@ and logistic growth curve, and contains analyses and visualizations of the resul
 
 ## LSTM
 ### References:
-1. [A Novel Intervention Recurrent autoencoder for real time forecasting and non-pharmaceutical intervention selection to curb the spread of Covid-19 in the world] (https://www.medrxiv.org/content/10.1101/2020.05.05.20091827v2.full)
-2. [Forecasting Treatment Responses Over Time Using Recurrent Marginal Structural Networks] (https://vanderschaar-lab.com/papers/nips_rmsn.pdf)
-3. [Using keras for designing encoder/decoder LSTM models] (https://betterprogramming.pub/a-guide-on-the-encoder-decoder-model-and-the-attention-mechanism-401c836e2cdb)
-4. [Background information on the encoder/decoder method] (https://towardsdatascience.com/understanding-encoder-decoder-sequence-to-sequence-model-679e04af4346)
-5. [Keras Neural Net Documentation] (https://keras.io/api/)
+1. [A Novel Intervention Recurrent autoencoder for real time forecasting and non-pharmaceutical intervention selection to curb the spread of Covid-19 in the world](https://www.medrxiv.org/content/10.1101/2020.05.05.20091827v2.full)
+2. [Forecasting Treatment Responses Over Time Using Recurrent Marginal Structural Networks](https://vanderschaar-lab.com/papers/nips_rmsn.pdf)
+3. [Using keras for designing encoder/decoder LSTM models](https://betterprogramming.pub/a-guide-on-the-encoder-decoder-model-and-the-attention-mechanism-401c836e2cdb)
+4. [Background information on the encoder/decoder method](https://towardsdatascience.com/understanding-encoder-decoder-sequence-to-sequence-model-679e04af4346)
+5. [Keras Neural Net Documentation](https://keras.io/api/)
 
 ### Datasets:
 1. `our_data/covid_metric_data/us/at_away_6_data.csv` - Contains SafeGraph mobility data - used to create daily feature value of mobile_ppl_per100
@@ -83,16 +83,16 @@ levels as daily features in the model.
 and converting data into a format suitable for input features.
 
 3. `lstm.ipynb` - An implementation of an Encoder/Decoder LSTM model for recursive multi-step forecasting of log daily covid cases with respect to school closures. The python notebook contains:
-  * Functions responsible for creating datasets usable by the LSTM for training, testing, and simulating
-  * A Keras model subclass for the encoder and decoder models
-  * Functions for training and evaluating the performance of the custom encoder and decoder LSTM models
-  * Functions for running counterfactual policy simulations using the encoder and decoder LSTM models
+    * Functions responsible for creating datasets usable by the LSTM for training, testing, and simulating
+    * A Keras model subclass for the encoder and decoder models
+    * Functions for training and evaluating the performance of the custom encoder and decoder LSTM models
+    * Functions for running counterfactual policy simulations using the encoder and decoder LSTM models
 
 ## XGBoost
 ### References:
-1. [XGBoost Documentation] (https://xgboost.readthedocs.io/en/latest/)
-2. [SHAP Library Documentation for Feature Interpretation] (https://shap.readthedocs.io/en/latest/index.html)
-3. [Guide to interpreting XGBoost models] (https://towardsdatascience.com/interpretable-machine-learning-with-xgboost-9ec80d148d27)
+1. [XGBoost Documentation](https://xgboost.readthedocs.io/en/latest/)
+2. [SHAP Library Documentation for Feature Interpretation](https://shap.readthedocs.io/en/latest/index.html)
+3. [Guide to interpreting XGBoost models](https://towardsdatascience.com/interpretable-machine-learning-with-xgboost-9ec80d148d27)
 
 ### Datasets:
 1. `our_data/covid_metric_data/us/at_away_6_data.csv` - Contains SafeGraph mobility data - used to create daily feature value of mobile_ppl_per100

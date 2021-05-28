@@ -188,7 +188,7 @@ def get_state_policy_data(fill=True):
         return policy_df
 
 def get_fb_cls_data():
-    fb_cls_df = pd.read_csv('our_data/misc_metric_data/us/cli_facebook_data.csv')
+    fb_cls_df = pd.read_csv('our_data/covid_metric_data/us/cli_facebook_data.csv')
     fb_cls_df = fb_cls_df.replace(abbrev_to_state)
     return fb_cls_df
 
@@ -404,7 +404,7 @@ def month_to_season_num(input_df):
     seasons_dict = {1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3, 12: 0}
     return temp.date.dt.month.map(seasons_dict)
 
-def get_binary_encoded_seasons(input_df):
+def get_binary_encoded_seasons():
     """
     Takes an input dataframe containing a column "date" and returns a df denoting
     the season and its binary representation.

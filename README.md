@@ -52,7 +52,25 @@ and logistic growth curve, and contains analyses and visualizations of the resul
     * Similar models as above, but with a logistic growth curve instead on smaller training periods
 
 
-## ARIMA
+## Interupted Time Series: Semented Regression and SARIMA
+### References:
+1. [Interrupted time series regression for the evaluation of public health interventions: a tutorial](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5407170/)
+2. [Interrupted time series analysis using autoregressive integrated moving average (ARIMA) models: a guide for evaluating large-scale health interventions] (https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-021-01235-8)
+3. [Intervention Analysis] (https://online.stat.psu.edu/stat510/lesson/9/9.2)
+4. [Impact of different control policies for COVID19 outbreak on the air transportation industry: A comparison between China, the U.S. and Singapore] (https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0248361) 
+5. [Assessing Health Care Interventions via an Interrupted Time Series Model: Study Power and Design Considerations] (https://arxiv.org/pdf/1805.07413.pdf)
+
+### Data Sets 
+1. `our_data/policy_data/international/OxCGRT_latest.csv` - OxCGRT Covid Policy Tracker containing national policies for countries across the globe. Used only U.S state COVID policies and their strictness
+levels as daily features in the model.
+2. `cs156b-data/us/covid/nyt_us_counties_daily.csv` - NYT US counties daily new COVID-19 output metrics dataset. Used to create state-level COVID-19 output metrics dataframe.
+
+### Implementation Files:
+1.  `initial_data_manip-sashacopy.ipynb` which was later mostly transfered to the utility file  `utils/data_funcs.py` - helper functions for beginning to experiment with linear regression and extracting all the features we wanted to use like days_since_more_strict and days_since_less_strict, political_index, mobile_ppl_per100, etc.
+3.  `time_series_sasha.ipynb` - experimenting with different methods of interupted time series analysis including segmented regression and SARIMA
+   * Several segmented regression models using a combination of level changes, trend changes, and lagged trend changes. The functional form of the model used for the segmented regression is cataloged in the notebook
+   * Seasonal decomposition of the case data, correlation matrix analysis, as well as predicted vs. actual plots
+   * ARIMA model fit on the preintervention period combined with an ARIMA model fit on the differences used to model a conterfactual and with-intervention reality. 
 
 ## LSTM
 ### References:

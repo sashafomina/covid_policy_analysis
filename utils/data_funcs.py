@@ -2,13 +2,14 @@ import pandas as pd
 import numpy as np
 import re
 import math
+from pandas.tseries.holiday import USFederalHolidayCalendar as calendar
 
 '''
 ===========================================
- All functions are helpers for getting the merged 
-data frame that will be used to train and test. Note 
-that for now, this overall data frame only gives 
-information based on the lock_down policy. 
+ All functions are helpers for getting the merged
+data frame that will be used to train and test. Note
+that for now, this overall data frame only gives
+information based on the lock_down policy.
 ===========================================
 '''
 
@@ -187,7 +188,7 @@ def get_state_policy_data(fill=True):
         return policy_df
 
 def get_fb_cls_data():
-    fb_cls_df = pd.read_csv('our_data/misc_metric_data/us/cli_facebook_data.csv')
+    fb_cls_df = pd.read_csv('our_data/covid_metric_data/us/cli_facebook_data.csv')
     fb_cls_df = fb_cls_df.replace(abbrev_to_state)
     return fb_cls_df
 
@@ -345,22 +346,22 @@ def get_overall_data_df(policy="stay_at_home"):
 
         # Add days since policy change
         policy_df.loc[:, 'days_since_more_strict'] =(
-            time_elapsed_since_policy_change(policy_df, 
+            time_elapsed_since_policy_change(policy_df,
                                              'c6_stay_at_home_requirements',
                                              type_change='more_strict'))
         policy_df.loc[:, 'days_since_less_strict'] = (
-            time_elapsed_since_policy_change(policy_df, 
+            time_elapsed_since_policy_change(policy_df,
                                              'c6_stay_at_home_requirements',
                                              type_change='less_strict'))
 
         # Rename region_name to state
         policy_df.rename(columns={'region_name': 'state'}, inplace=True)
 
-        
+
         # Merge daily cases with policy df
         df = df.merge(policy_df, how='left', on=['state', 'date'])
-        
-        
+
+
         # Merge pop density with input df
         df = df.merge(get_pop_density_by_state_data(), on='state', how='left')
 
@@ -378,7 +379,7 @@ def get_overall_data_df(policy="stay_at_home"):
         alpha_ordered_states.sort()
         binary_state_encoded_df = binary_encode_category(alpha_ordered_states, 'state')
         df = df.merge(binary_state_encoded_df, on='state', how='left')
-        
+
         # Adding day, year, month and dropping date
         df['month'] = df.date.dt.month
         df['year'] = df.date.dt.year-2020
@@ -388,3 +389,50 @@ def get_overall_data_df(policy="stay_at_home"):
 
 
         return df
+
+def month_to_season_num(input_df):
+    """
+    Takes an input dataframe containing a column "date" and returns a
+    series where each date has been mapped to a numeric representation of
+    a season.
+    December, January, February -> Winter -> 0
+    March, April, May -> Spring -> 1
+    June, July, August -> Summer -> 2
+    September, October, November -> Fall -> 3
+    """
+    temp = input_df.copy()
+    seasons_dict = {1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3, 12: 0}
+    return temp.date.dt.month.map(seasons_dict)
+
+def get_binary_encoded_seasons():
+    """
+    Takes an input dataframe containing a column "date" and returns a df denoting
+    the season and its binary representation.
+    We convert season numbers to binary via the binary_encode_category() function.
+    """
+    binary_seasons_encoded_df = binary_encode_category(np.array([0, 1, 2, 3]), 'seasons')
+
+    return binary_seasons_encoded_df
+
+def get_holiday_window():
+    """
+    Returns list of days that are either <= 14 days before a holiday, or
+    <= 7 days after a holiday
+    """
+    dr = pd.date_range(start='2020-01-01', end='2021-03-31')
+    cal = calendar()
+    holidays = cal.holidays(start=dr.min(), end=dr.max())
+    holiday_window = []
+    for h in holidays:
+        for d in pd.date_range(start = h - pd.Timedelta(days = 14), end = h + pd.Timedelta(days = 7)):
+            if d not in holiday_window:
+                holiday_window.append(d)
+    return holiday_window
+
+def get_close_to_holiday(input_df):
+    """
+    Takes an input dataframe containing a column "date" and returns a series denoting
+    whether or not each date is close to a holiday.
+    """
+    holiday_window = get_holiday_window()
+    return input_df['date'].isin(holiday_window).replace({True: 1, False: 0})

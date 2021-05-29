@@ -68,9 +68,9 @@ levels as daily features in the model.
 ### Implementation Files:
 1.  `initial_data_manip-sashacopy.ipynb` which was later mostly transfered to the utility file  `utils/data_funcs.py` - helper functions for beginning to experiment with linear regression and extracting all the features we wanted to use like days_since_more_strict and days_since_less_strict, political_index, mobile_ppl_per100, etc.
 3.  `time_series_sasha.ipynb` - experimenting with different methods of interupted time series analysis including segmented regression and SARIMA
-   * Several segmented regression models using a combination of level changes, trend changes, and lagged trend changes. The functional form of the model used for the segmented regression is cataloged in the notebook
-   * Seasonal decomposition of the case data, correlation matrix analysis, as well as predicted vs. actual plots
-   * ARIMA model fit on the preintervention period combined with an ARIMA model fit on the differences used to model a conterfactual and with-intervention reality. 
+      * Several segmented regression models using a combination of level changes, trend changes, and lagged trend changes. The functional form of the model used for the segmented regression is cataloged in the notebook
+      * Seasonal decomposition of the case data, correlation matrix analysis, as well as predicted vs. actual plots
+      * ARIMA model fit on the preintervention period combined with an ARIMA model fit on the differences used to model a conterfactual and with-intervention reality. 
 
 ## LSTM
 ### References:
